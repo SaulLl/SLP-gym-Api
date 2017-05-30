@@ -67,7 +67,7 @@ function signIn(request,response) {
          response.status(200).send({
          message:"Usuario correcto ",
          user:userresult,
-         token:service.createToken(userresult)
+         access_token:service.createToken(userresult)
      });
      }
      })

@@ -57,13 +57,13 @@ module.exports.getEventsToday = function () {
     let search = {"evt_date" : {"$gte" : todaydate, "$lte" : tomorrow}};
 
     return new Promise(function (fulfill, reject) {
-        Event.find(search,function (err, inscriptions) {
+        Event.find(search,function (err, events) {
             if (err) {
                 reject(err);
             }
             else {
-                Activity.populate(inscriptions,{path: "evt_activity"},function(err, inscriptions){
-                    fulfill(inscriptions);
+                Activity.populate(events,{path: "evt_activity"},function(err, events){
+                    fulfill(events);
                 });
 
             }
@@ -87,7 +87,10 @@ module.exports.getUserEvents = function (id) {
                 reject(err);
             }
             else {
-                fulfill(events)
+                Activity.populate(events,{path: "evt_activity"},function(err, events){
+                    fulfill(events);
+                });
+
             }
         });
     });
@@ -102,13 +105,13 @@ module.exports.getUserEvents = function (id) {
 module.exports.getEvents = function () {
 
     return new Promise(function (fulfill, reject) {
-        Event.find({},function (err, inscriptions) {
+        Event.find({},function (err, events) {
             if (err) {
                 reject(err);
             }
             else {
-                Activity.populate(inscriptions,{path: "evt_activity"},function(err, inscriptions){
-                    fulfill(inscriptions);
+                Activity.populate(events,{path: "evt_activity"},function(err, events){
+                    fulfill(events);
                 });
 
             }
