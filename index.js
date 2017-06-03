@@ -7,8 +7,11 @@
  */
 
 //Cargo el archivo de configuracion de express que esta en el directorio de la configuración
-const app = require('./app');
-
+const express = require('./config/expressConfig');
+//Cargo el archivo de puertos
+const ports = require('./config/ports');
+//Cargo el fichero de configuracion de la base de datos
+const dbconf = require('./config/mongooseConfig')
 
 /*
   Importo mongoose para realizar las operaciones con la  base de datos de mongo
@@ -17,20 +20,26 @@ const mongoose = require('mongoose');
 
 mongoose.Promise= require('bluebird');
 
-//Guardo el puerto que voy a utilizar en una constante
-const port = 3000;
 
-mongoose.connect('mongodb://localhost:27017/gym',function(error,response) {
+    //Utilizo la propiedad listen de express para indicarle por que puerto tiene que escuchar
+    //Acedo a la variable portExpress para saber en que puerto esta configurado
+    express.listen(ports.portExpress,function() {
+        //Muestro el mensaje de que la API esta corriendo
+        console.log('API rest corriendo en http://localhost:'+ ports.portExpress);
+    });
+
+
+
+mongoose.connect('mongodb://'+dbconf.dns+':'+ports.portMongo+'/'+dbconf.db,function(error,response) {
+    /*Si ha habido un error muestro el mensaje de error*/
     if(error){
-        console.log("Error al realizar la conesion con mongodb "+error)
+        console.log("Error al realizar la conesion con mongodb "+error);
+    /*Si no ha habido error muestro un mensaje satisfactorio*/
     }else {
         console.log("conexion establecida");
     }
 
-    //app escuchara por el puerto 3000
-    app.listen(port,function () {
-        console.log('API rest corriendo en http://localhost:'+port);
-    });
+
 
 });
 

@@ -15,33 +15,30 @@ const Activity = mongoose.model("Activity");
 //El modelo even va utilizar el modelo user
 const User = mongoose.model("User");
 
-/*Defino el modelo de datos para Event
- * *******************************************
- * PROPIEDADES DE Event
- * *******************************************
- *   act_activity => Actividad para la que se raliza el evento
- *   act_day => Dia en el que se realiza la actividad
- *   act_hour => Imagen o video sobre la actividad
- * */
-const EventSchema = Schema({
+/*Defino el modelo de datos para Event */
+/*El modelo de datos lo defino utilizando la propiedad schema*/
+const EventSchema = new Schema({
+    /*evt_activity almacena un objeto tipo Activity*/
     evt_activity: {
         type: Schema.Types.ObjectId,
         ref: 'Activity'
     },
+    /*evt_date almacena la fecha del evento*/
     evt_date:{
         type:Date
     },
+    /*evt_place string que almacena el lugar donde se celebra el evento*/
     evt_place: {
-        type:String ,
+        type:String
     },
+    /*evt_users almacena un objeto tipo Users*/
     evt_users:[{
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: 'User'
     }]
 
-
-
 });
 
+/*Exporto el modelo de mongoose para que los servicios puedan aceder a el*/
 module.exports= mongoose.model('Event',EventSchema);
 

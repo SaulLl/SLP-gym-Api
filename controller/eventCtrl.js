@@ -6,12 +6,23 @@
  * @since 20/04/2017
  */
 
+//Importo el servicio de eventos
 const EventService = require("../services/eventService");
-const Even = require("../model/event");
 
-
+/**
+ * Hace una peticion al servicio de eventos para crear un nuevo evento
+ * @param request
+ * @param response
+ */
 module.exports.newEvent = function (request,response){
+    /**
+     * LLama al servicio newEvent para que cree el nuevo evento metiendole como parametro los datos del body
+     * @type {Object}
+     */
     const event = EventService.newEvent(request.body);
+    /**
+     * Si se cumple la llamada al servicio debelve  el objeto creado y si no debuelve un error
+     */
     event.then(function (eventresult) {
         response.status(200).send({eventresult});
     }).catch(function (err) {
@@ -20,6 +31,10 @@ module.exports.newEvent = function (request,response){
 };
 
 module.exports.getEventsToday =  function (request,response) {
+    /**
+     * LLama al servicio getEventsToday para obtener los eventos en el dia de hoy
+     * @type {Object}
+     */
     const events = EventService.getEventsToday();
     events.then(function (eventsresult) {
         response.status(200).send({eventsresult});

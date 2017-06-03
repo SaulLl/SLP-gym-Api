@@ -2,10 +2,13 @@
  * @author Saúl llamas Parra
  *
  */
+/*Importo el modelo de datos de Event para sealizar las consultas al modelo de eventos*/
 const Event = require('../model/event');
+/*Importo el modelo de datos de Activity  para popular el campo evt_activity*/
 const Activity = require("../model/activity");
-const User = require("../model/user");
+/*Para realizar promesas con mongoose es necesario importar el bluebird*/
 const Promise = require('bluebird');
+/*Para Operar con fechas importo moment*/
 const moment = require('moment');
 /**
  * Crear un nuevo evento
@@ -17,21 +20,25 @@ module.exports.newEvent = function(body) {
      * Source es un objeto que incluira los datos necesarios para crear el evento
      * @type {{}}
      */
-    let source = {};
-
+    let paramsNewEvent = {};
+    /*Si en el cuerpo de la peticion se ha encontrado evt_activity lo meto en el array  de parametros */
     if (body.evt_activity) {
-        source.evt_activity = body.evt_activity;
+        paramsNewEvent.evt_activity = body.evt_activity;
     }
+    /*Si en el cuerpo de la peticion se ha encontrado evt_date lo meto en el array  de parametros */
     if (body.evt_date){
-        source.evt_date =body.evt_date;
+        paramsNewEvent.evt_date =body.evt_date;
     }
+    /*Si en el cuerpo de la peticion se ha encontrado evt_place lo meto en el array  de parametros */
     if (body.evt_place){
-        source.evt_place = body.evt_place;
+        paramsNewEvent.evt_place = body.evt_place;
     }
 
 
     return new Promise(function (fulfill, reject) {
-        Event.create(source, function (err, res) {
+        /*Introducco los campos del body a la base de datos*/
+        /*Utilizo create de mongoose para hacer una insercion en la base de datos*/
+        Event.create(paramsNewEvent, function (err, res) {
             if (err) {
                 reject(err);
             }
@@ -48,9 +55,9 @@ module.exports.newEvent = function(body) {
  * @return {Array} array de las actividades encontradas | Error en caso de error
  */
 module.exports.getEventsToday = function () {
-
+    //Establecco la fecha de moment a Español
     moment.locale('es');
-
+    //
     let todaydate = moment().format();
     let tomorrow = moment().add(1,'day').format();
 
@@ -105,6 +112,7 @@ module.exports.getUserEvents = function (id) {
 module.exports.getEvents = function () {
 
     return new Promise(function (fulfill, reject) {
+        //Con la funcion find de mongoose ha
         Event.find({},function (err, events) {
             if (err) {
                 reject(err);
@@ -112,7 +120,7 @@ module.exports.getEvents = function () {
             else {
                 Activity.populate(events,{path: "evt_activity"},function(err, events){
                     fulfill(events);
-                });
+                })
 
             }
         });
