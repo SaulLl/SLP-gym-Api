@@ -1,10 +1,10 @@
 /**
- * @summary Archivo de servicios
- * @description Este archivo es el mas importante de la aplicacion
+ * @summary servicio para las peticiones del evento
+ * @description Este archivo es el mas importante de la aplicacion por que continene la informacion sobre los eventos
  * @author Saúl llamas Parra
  *
  */
-/*Importo el modelo de datos de Event para sealizar las consultas al modelo de eventos*/
+/*Importo el modelo de datos de Event para las consultas al modelo de eventos*/
 const Event = require('../model/event');
 /*Importo el modelo de datos de Activity  para popular el campo evt_activity*/
 const Activity = require("../model/activity");
@@ -12,10 +12,12 @@ const Activity = require("../model/activity");
 const Promise = require('bluebird');
 /*Para Operar con fechas importo moment*/
 const moment = require('moment');
+//Establecco la fecha de moment a Español
+moment.locale('es');
 /**
  * Crear un nuevo evento
  * @param body {object} Datos que recibe mediante POST
- * @return {Object} Objeto creado
+ * @return {Object} Objeto creado|eror
  */
 module.exports.newEvent = function(body) {
     /**
@@ -45,7 +47,7 @@ module.exports.newEvent = function(body) {
             if (err) {
                 reject(err);
             }
-
+            /*Si es correcto devulevo el evento creado*/
             else {
                 fulfill(eventCreated);
             }
@@ -54,27 +56,42 @@ module.exports.newEvent = function(body) {
 };
 
 /**
- * Obtener las actividades que hay el dia actual
+ * Obtener los eventos que hay el dia actual
  * @param params {object}
- * @return {Array} array de las actividades encontradas | Error en caso de error
+ * @return {Array} array de las eventos encontrados | Error en caso de error
  */
 module.exports.getEventsToday = function () {
-    //Establecco la fecha de moment a Español
-    moment.locale('es');
-    //
+
+    //Con moment devuelvo la fecha del dia actual
     let todaydate = moment().format();
+    //Con moment devuelvo la fecha del dia siguiente
     let tomorrow = moment().add(1,'day').format();
 
+    /**
+     * Array que contiene la sentencia tipo json que se le envia a mongo
+     * @type {Array}
+     */
     let search = {"evt_date" : {"$gte" : todaydate, "$lte" : tomorrow}};
 
     return new Promise(function (fulfill, reject) {
+        /*Debuelve los eventos organizados entre la fecha de actual y el dia siguiente*/
         Event.find(search,function (err, events) {
             if (err) {
                 reject(err);
             }
             else {
-                Activity.populate(events,{path: "evt_activity"},function(err, events){
-                    fulfill(events);
+               /*Si la respuesta es satisfactoria populo el campo  evt_activity
+               * Para popular un campo aplico la propiedad populate que tiene los siguientes campos
+               *    - Array donde se encuentra el campo a popular en este caso events
+               *    - campo que se quiere popular
+               * */
+                Activity.populate(events,{path: "evt_activity"},function(errpopulate, events){
+
+                    if(errpopulate){
+                        reject(err);
+                    }else{
+                        fulfill(events);
+                    }
                 });
 
             }
@@ -120,11 +137,13 @@ module.exports.getEvents = function () {
     return new Promise(function (fulfill, reject) {
         //Con la funcion find hago una consulta a la base de datos con las actividades que hay a partir de hoy
         Event.find({"evt_date" : {"$gt" :today}},function (err, events) {
+            /*Si hay error muestro el error*/
             if (err) {
                 reject(err);
             }
             else {
                 /*Populo el campo evt_activity para obtener la actividad como documento */
+
                 Activity.populate(events,{path: "evt_activity"},function(err, events){
                     fulfill(events);
                 })
@@ -137,12 +156,21 @@ module.exports.getEvents = function () {
 
 
 
-
+/**
+ * @summary funcion para inscribirse a una actividad
+ * @description Añade una identificación al array de usuarios del evento
+ * @param params {object}
+ * @return {Array} array con todas las actividades | Error en caso de error
+ */
 module.exports.attendEvent = function (id,body) {
-    let update = body;
+    /*Obtiene el usuario*/
+    let user = body;
+    /*Esta es la promesa que devuelve*/
     return new Promise(function (fulfill, reject) {
-        Event.update({ _id: id },{$push:update}).
+        /*En el array de usuarios inscritos al evento inclullo event*/
+        Event.update({ _id: id },{$push:user}).
         exec(function (err, res) {
+            /*Si hay error muestro el error*/
             if (err) {
                 reject(err);
             }
@@ -152,7 +180,12 @@ module.exports.attendEvent = function (id,body) {
         });
     });
 };
-
+/**
+ * @summary funcion para desapuntarse del evento
+ * @description Borra una identificación de usuario a un evento
+ * @param params {object}
+ * @return {Array} array con todas las actividades | Error en caso de error
+ */
 module.exports.noAttendEvent = function (id,body) {
     let update = body;
     return new Promise(function (fulfill, reject) {

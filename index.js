@@ -1,6 +1,6 @@
 'use script'
-/**
- * Este es el archivo que cargara la aplicación
+/**@summary fichero de carga
+ * @description Este es el archivo que cargara la aplicación
  * @author Saul Llamas Parra
  * @since 15-04-2017
  * @version 2.1

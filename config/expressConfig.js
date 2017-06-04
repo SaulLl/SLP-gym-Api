@@ -1,5 +1,4 @@
 'use script'
-
 /**
  * @summary Fichero de documentacion de express
  * @description El siguiente archivo contiene la configuracion del framework express
@@ -25,6 +24,7 @@ module.exports.portExpress = 3000;
  Al importarlo con require busca el archivo de carga en la carpeta node modules
  */
 const bodyParser = require('body-parser');
+
 
 
 //Declaro una constante express que utilizara expressConfig

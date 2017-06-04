@@ -1,4 +1,11 @@
 /**
+ * @summary Fichero de puertos
+ * @description En este fichero se van a configurar los puertos principales de la aplicacion
+ * @author Saul Llamas Parra
+ * @since 15-04-2017
+ */
+
+/**
  * Puerto para express
  * @type {number}
  */
