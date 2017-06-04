@@ -85,7 +85,6 @@ function saveActivity(request,response) {
     let activity = new Activity()
     activity.act_name = request.body.act_name;
     activity.act_description = request.body.act_description;
-    activity.act_image = request.body.act_image;
     activity.act_intensy = request.body.act_intensy;
     activity.act_duration = request.body.act_duration;
 

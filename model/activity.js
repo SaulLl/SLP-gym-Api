@@ -17,15 +17,13 @@ const Schema = mongoose.Schema;
 * *******************************************
 *   act_name => Nombre de la actividad
 *   act_description => Descripción de la actividad
-*   act_image => Imagen sobre la actividad
-*   act_logo => Logo de la actividad
 *   act_intensy => intensidad de la actividad
 *   act_duration => duracion de la actividad
-*   act_places => Aforo de la actividad
 * */
 const ActivitySchema = Schema({
     act_name:{
-        type:String
+        type:String,
+        unique:true
     },
     act_description:{
         type:String

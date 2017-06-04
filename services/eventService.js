@@ -17,7 +17,7 @@ const moment = require('moment');
  */
 module.exports.newEvent = function(body) {
     /**
-     * Source es un objeto que incluira los datos necesarios para crear el evento
+     * paramsNewEvent es un objeto que incluira los datos necesarios para crear el evento
      * @type {{}}
      */
     let paramsNewEvent = {};
@@ -38,12 +38,14 @@ module.exports.newEvent = function(body) {
     return new Promise(function (fulfill, reject) {
         /*Introducco los campos del body a la base de datos*/
         /*Utilizo create de mongoose para hacer una insercion en la base de datos*/
-        Event.create(paramsNewEvent, function (err, res) {
+        Event.create(paramsNewEvent, function (err, eventCreated) {
+            /*Si hay un error debuelvo el error*/
             if (err) {
                 reject(err);
             }
+
             else {
-                fulfill(res);
+                fulfill(eventCreated);
             }
         });
     });
@@ -110,14 +112,17 @@ module.exports.getUserEvents = function (id) {
  * @return {Array} array con todas las actividades | Error en caso de error
  */
 module.exports.getEvents = function () {
+    //Obtengo la fecha actual
+    var today = moment();
 
     return new Promise(function (fulfill, reject) {
-        //Con la funcion find de mongoose ha
-        Event.find({},function (err, events) {
+        //Con la funcion find hago una consulta a la base de datos con las actividades que hay a partir de hoy
+        Event.find({"evt_date" : {"$gt" :today}},function (err, events) {
             if (err) {
                 reject(err);
             }
             else {
+                /*Populo el campo evt_activity para obtener la actividad como documento */
                 Activity.populate(events,{path: "evt_activity"},function(err, events){
                     fulfill(events);
                 })
