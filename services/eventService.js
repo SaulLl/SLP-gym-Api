@@ -86,9 +86,10 @@ module.exports.getEventsToday = function () {
                *    - campo que se quiere popular
                * */
                 Activity.populate(events,{path: "evt_activity"},function(errpopulate, events){
-
+                    /*Si ha habido un error debuelbo  el error*/
                     if(errpopulate){
                         reject(err);
+                    /*Si no a habido errores entonces entonces debuelvo el evento con los campos ya populados*/
                     }else{
                         fulfill(events);
                     }
@@ -100,7 +101,7 @@ module.exports.getEventsToday = function () {
 };
 
 /**
- * Obtener las actividades que hay el dia actual
+ * Obtener las actividades a las que esta apuntado un usuario
  * @param params {object}
  * @return {Array} array de las actividades encontradas | Error en caso de error
  */
@@ -115,8 +116,19 @@ module.exports.getUserEvents = function (id) {
                 reject(err);
             }
             else {
-                Activity.populate(events,{path: "evt_activity"},function(err, events){
-                    fulfill(events);
+                /*Si la respuesta es satisfactoria populo el campo  evt_activity
+                 * Para popular un campo aplico la propiedad populate que tiene los siguientes campos
+                 *    - Array donde se encuentra el campo a popular en este caso events
+                 *    - campo que se quiere popular
+                 * */
+                Activity.populate(events,{path: "evt_activity"},function(errpopulate, events){
+                    /*Si ha habido un error debuelbo  el error*/
+                    if(errpopulate){
+                        reject(err);
+                        /*Si no a habido errores entonces entonces debuelvo el evento con los campos ya populados*/
+                    }else{
+                        fulfill(events);
+                    }
                 });
 
             }
@@ -142,12 +154,20 @@ module.exports.getEvents = function () {
                 reject(err);
             }
             else {
-                /*Populo el campo evt_activity para obtener la actividad como documento */
-
-                Activity.populate(events,{path: "evt_activity"},function(err, events){
-                    fulfill(events);
-                })
-
+                /*Si la respuesta es satisfactoria populo el campo  evt_activity
+                 * Para popular un campo aplico la propiedad populate que tiene los siguientes campos
+                 *    - Array donde se encuentra el campo a popular en este caso events
+                 *    - campo que se quiere popular
+                 * */
+                Activity.populate(events,{path: "evt_activity"},function(errpopulate, events){
+                    /*Si ha habido un error debuelbo  el error*/
+                    if(errpopulate){
+                        reject(err);
+                        /*Si no a habido errores entonces entonces debuelvo el evento con los campos ya populados*/
+                    }else{
+                        fulfill(events);
+                    }
+                });
             }
         });
     });
